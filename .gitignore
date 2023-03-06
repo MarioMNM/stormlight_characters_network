@@ -1,3 +1,5 @@
 .ipynb_checkpoints
 .venv
 books/*
+*__pycache__
+logs/*

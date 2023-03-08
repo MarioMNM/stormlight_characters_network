@@ -1,0 +1,250 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 1000px;
+                 height: 700px;
+                 background-color: #222222;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+             #loadingBar {
+                 position:absolute;
+                 top:0px;
+                 left:0px;
+                 width: 1000px;
+                 height: 700px;
+                 background-color:rgba(200,200,200,0.8);
+                 -webkit-transition: all 0.5s ease;
+                 -moz-transition: all 0.5s ease;
+                 -ms-transition: all 0.5s ease;
+                 -o-transition: all 0.5s ease;
+                 transition: all 0.5s ease;
+                 opacity:1;
+             }
+
+             #bar {
+                 position:absolute;
+                 top:0px;
+                 left:0px;
+                 width:20px;
+                 height:20px;
+                 margin:auto auto auto auto;
+                 border-radius:11px;
+                 border:2px solid rgba(30,30,30,0.05);
+                 background: rgb(0, 173, 246); /* Old browsers */
+                 box-shadow: 2px 0px 4px rgba(0,0,0,0.4);
+             }
+
+             #border {
+                 position:absolute;
+                 top:10px;
+                 left:10px;
+                 width:500px;
+                 height:23px;
+                 margin:auto auto auto auto;
+                 box-shadow: 0px 0px 4px rgba(0,0,0,0.2);
+                 border-radius:10px;
+             }
+
+             #text {
+                 position:absolute;
+                 top:8px;
+                 left:530px;
+                 width:30px;
+                 height:50px;
+                 margin:auto auto auto auto;
+                 font-size:22px;
+                 color: #000000;
+             }
+
+             div.outerBorder {
+                 position:relative;
+                 top:400px;
+                 width:600px;
+                 height:44px;
+                 margin:auto auto auto auto;
+                 border:8px solid rgba(0,0,0,0.1);
+                 background: rgb(252,252,252); /* Old browsers */
+                 background: -moz-linear-gradient(top,  rgba(252,252,252,1) 0%, rgba(237,237,237,1) 100%); /* FF3.6+ */
+                 background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(252,252,252,1)), color-stop(100%,rgba(237,237,237,1))); /* Chrome,Safari4+ */
+                 background: -webkit-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Chrome10+,Safari5.1+ */
+                 background: -o-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Opera 11.10+ */
+                 background: -ms-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* IE10+ */
+                 background: linear-gradient(to bottom,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* W3C */
+                 filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcfcfc', endColorstr='#ededed',GradientType=0 ); /* IE6-9 */
+                 border-radius:72px;
+                 box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
+             }
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+            <div id="loadingBar">
+              <div class="outerBorder">
+                <div id="text">0%</div>
+                <div id="border">
+                  <div id="bar"></div>
+                </div>
+              </div>
+            </div>
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": "#97c2fc", "font": {"color": "white"}, "id": "Dalinar", "label": "Dalinar", "shape": "dot", "size": 35}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Szeth", "label": "Szeth", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Jasnah", "label": "Jasnah", "shape": "dot", "size": 27}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Adolin", "label": "Adolin", "shape": "dot", "size": 28}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Renarin", "label": "Renarin", "shape": "dot", "size": 12}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Elhokar", "label": "Elhokar", "shape": "dot", "size": 14}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Vartian", "label": "Vartian", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Gavilar", "label": "Gavilar", "shape": "dot", "size": 8}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Bashin", "label": "Bashin", "shape": "dot", "size": 4}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Brightlord", "label": "Brightlord", "shape": "dot", "size": 23}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Ten", "label": "Ten", "shape": "dot", "size": 9}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Hatham", "label": "Hatham", "shape": "dot", "size": 5}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Teshav", "label": "Teshav", "shape": "dot", "size": 3}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Kadash", "label": "Kadash", "shape": "dot", "size": 3}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Ruthar", "label": "Ruthar", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Aladar", "label": "Aladar", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Kaladin", "label": "Kaladin", "shape": "dot", "size": 52}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Lady", "label": "Lady", "shape": "dot", "size": 1}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Taselin", "label": "Taselin", "shape": "dot", "size": 1}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Navani", "label": "Navani", "shape": "dot", "size": 13}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Roshar", "label": "Roshar", "shape": "dot", "size": 18}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Roion", "label": "Roion", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Litima", "label": "Litima", "shape": "dot", "size": 5}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Isasik", "label": "Isasik", "shape": "dot", "size": 1}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Teleb", "label": "Teleb", "shape": "dot", "size": 4}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Ashelem", "label": "Ashelem", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Ilamar", "label": "Ilamar", "shape": "dot", "size": 4}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Havrom", "label": "Havrom", "shape": "dot", "size": 3}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Niter", "label": "Niter", "shape": "dot", "size": 3}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Herdazian", "label": "Herdazian", "shape": "dot", "size": 7}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Danlan", "label": "Danlan", "shape": "dot", "size": 9}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Thaylen", "label": "Thaylen", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Ialai", "label": "Ialai", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Natanatan", "label": "Natanatan", "shape": "dot", "size": 5}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Resi", "label": "Resi", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Elthebar", "label": "Elthebar", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Truthless", "label": "Truthless", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Ton", "label": "Ton", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Amark", "label": "Amark", "shape": "dot", "size": 4}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Taravangian", "label": "Taravangian", "shape": "dot", "size": 6}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Shallan", "label": "Shallan", "shape": "dot", "size": 17}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Yalb", "label": "Yalb", "shape": "dot", "size": 7}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Malise", "label": "Malise", "shape": "dot", "size": 1}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Kabsal", "label": "Kabsal", "shape": "dot", "size": 6}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Balat", "label": "Balat", "shape": "dot", "size": 4}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Unclaimed", "label": "Unclaimed", "shape": "dot", "size": 6}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Wikim", "label": "Wikim", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Varas", "label": "Varas", "shape": "dot", "size": 1}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Klade", "label": "Klade", "shape": "dot", "size": 1}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Matain", "label": "Matain", "shape": "dot", "size": 1}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Tozbek", "label": "Tozbek", "shape": "dot", "size": 3}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Cenn", "label": "Cenn", "shape": "dot", "size": 8}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Vstim", "label": "Vstim", "shape": "dot", "size": 4}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Dallet", "label": "Dallet", "shape": "dot", "size": 7}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Kusiri", "label": "Kusiri", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Tien", "label": "Tien", "shape": "dot", "size": 13}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Galan", "label": "Galan", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Dunny", "label": "Dunny", "shape": "dot", "size": 8}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Hallaw", "label": "Hallaw", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Tvlakv", "label": "Tvlakv", "shape": "dot", "size": 5}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Tukks", "label": "Tukks", "shape": "dot", "size": 3}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Lirin", "label": "Lirin", "shape": "dot", "size": 12}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Teft", "label": "Teft", "shape": "dot", "size": 9}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Moash", "label": "Moash", "shape": "dot", "size": 5}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Sigzil", "label": "Sigzil", "shape": "dot", "size": 8}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Horneater", "label": "Horneater", "shape": "dot", "size": 9}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Rock", "label": "Rock", "shape": "dot", "size": 7}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Khav", "label": "Khav", "shape": "dot", "size": 3}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Laral", "label": "Laral", "shape": "dot", "size": 7}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Jost", "label": "Jost", "shape": "dot", "size": 7}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Dabbid", "label": "Dabbid", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Harl", "label": "Harl", "shape": "dot", "size": 3}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Hav", "label": "Hav", "shape": "dot", "size": 1}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Lamaril", "label": "Lamaril", "shape": "dot", "size": 4}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Natam", "label": "Natam", "shape": "dot", "size": 1}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Unkalaki", "label": "Unkalaki", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Lopen", "label": "Lopen", "shape": "dot", "size": 9}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Wistiow", "label": "Wistiow", "shape": "dot", "size": 6}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Rillir", "label": "Rillir", "shape": "dot", "size": 5}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Hesina", "label": "Hesina", "shape": "dot", "size": 4}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Hashal", "label": "Hashal", "shape": "dot", "size": 3}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Ral", "label": "Ral", "shape": "dot", "size": 4}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Naget", "label": "Naget", "shape": "dot", "size": 5}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Natir", "label": "Natir", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Taleb", "label": "Taleb", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Ven", "label": "Ven", "shape": "dot", "size": 1}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Alabet", "label": "Alabet", "shape": "dot", "size": 1}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Baxil", "label": "Baxil", "shape": "dot", "size": 1}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Avarak", "label": "Avarak", "shape": "dot", "size": 1}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Tarah", "label": "Tarah", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Sheler", "label": "Sheler", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Nacomb", "label": "Nacomb", "shape": "dot", "size": 1}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Torol", "label": "Torol", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Havarah", "label": "Havarah", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Fin", "label": "Fin", "shape": "dot", "size": 1}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Ashlv", "label": "Ashlv", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Artmyrn", "label": "Artmyrn", "shape": "dot", "size": 3}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Rysn", "label": "Rysn", "shape": "dot", "size": 4}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Eylita", "label": "Eylita", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Luesh", "label": "Luesh", "shape": "dot", "size": 3}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Sur", "label": "Sur", "shape": "dot", "size": 1}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Barmest", "label": "Barmest", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Axies", "label": "Axies", "shape": "dot", "size": 1}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Terith", "label": "Terith", "shape": "dot", "size": 1}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Habrin", "label": "Habrin", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Loats", "label": "Loats", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Ishikk", "label": "Ishikk", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Thaspic", "label": "Thaspic", "shape": "dot", "size": 1}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Maib", "label": "Maib", "shape": "dot", "size": 1}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Avaran", "label": "Avaran", "shape": "dot", "size": 1}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Falksi", "label": "Falksi", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Jakamav", "label": "Jakamav", "shape": "dot", "size": 3}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Eshava", "label": "Eshava", "shape": "dot", "size": 1}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Inkima", "label": "Inkima", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Jest", "label": "Jest", "shape": "dot", "size": 3}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Abry", "label": "Abry", "shape": "dot", "size": 1}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Marks", "label": "Marks", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Tibon", "label": "Tibon", "shape": "dot", "size": 1}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Bethab", "label": "Bethab", "shape": "dot", "size": 1}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Miasal", "label": "Miasal", "shape": "dot", "size": 1}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Agil", "label": "Agil", "shape": "dot", "size": 1}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Marf", "label": "Marf", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Arafik", "label": "Arafik", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Jorna", "label": "Jorna", "shape": "dot", "size": 2}]);
+                  edges = new vis.DataSet([{"from": "Dalinar", "to": "Szeth", "value": 6, "width": 1}, {"from": "Dalinar", "to": "Jasnah", "value": 76, "width": 1}, {"from": "Dalinar", "to": "Adolin", "value": 1459, "width": 1}, {"from": "Dalinar", "to": "Renarin", "value": 256, "width": 1}, {"from": "Dalinar", "to": "Elhokar", "value": 694, "width": 1}, {"from": "Dalinar", "to": "Vartian", "value": 3, "width": 1}, {"from": "Dalinar", "to": "Gavilar", "value": 132, "width": 1}, {"from": "Dalinar", "to": "Bashin", "value": 12, "width": 1}, {"from": "Dalinar", "to": "Brightlord", "value": 117, "width": 1}, {"from": "Dalinar", "to": "Ten", "value": 12, "width": 1}, {"from": "Dalinar", "to": "Hatham", "value": 47, "width": 1}, {"from": "Dalinar", "to": "Teshav", "value": 11, "width": 1}, {"from": "Dalinar", "to": "Kadash", "value": 7, "width": 1}, {"from": "Dalinar", "to": "Ruthar", "value": 12, "width": 1}, {"from": "Dalinar", "to": "Aladar", "value": 4, "width": 1}, {"from": "Dalinar", "to": "Kaladin", "value": 285, "width": 1}, {"from": "Dalinar", "to": "Lady", "value": 3, "width": 1}, {"from": "Dalinar", "to": "Taselin", "value": 10, "width": 1}, {"from": "Dalinar", "to": "Navani", "value": 421, "width": 1}, {"from": "Dalinar", "to": "Roshar", "value": 27, "width": 1}, {"from": "Dalinar", "to": "Roion", "value": 26, "width": 1}, {"from": "Dalinar", "to": "Litima", "value": 7, "width": 1}, {"from": "Dalinar", "to": "Isasik", "value": 9, "width": 1}, {"from": "Dalinar", "to": "Teleb", "value": 71, "width": 1}, {"from": "Dalinar", "to": "Ashelem", "value": 1, "width": 1}, {"from": "Dalinar", "to": "Ilamar", "value": 4, "width": 1}, {"from": "Dalinar", "to": "Havrom", "value": 15, "width": 1}, {"from": "Dalinar", "to": "Niter", "value": 3, "width": 1}, {"from": "Dalinar", "to": "Herdazian", "value": 6, "width": 1}, {"from": "Dalinar", "to": "Danlan", "value": 29, "width": 1}, {"from": "Dalinar", "to": "Thaylen", "value": 9, "width": 1}, {"from": "Dalinar", "to": "Ialai", "value": 1, "width": 1}, {"from": "Dalinar", "to": "Natanatan", "value": 3, "width": 1}, {"from": "Dalinar", "to": "Resi", "value": 2, "width": 1}, {"from": "Dalinar", "to": "Elthebar", "value": 3, "width": 1}, {"from": "Szeth", "to": "Elhokar", "value": 3, "width": 1}, {"from": "Szeth", "to": "Ten", "value": 21, "width": 1}, {"from": "Szeth", "to": "Truthless", "value": 6, "width": 1}, {"from": "Szeth", "to": "Gavilar", "value": 15, "width": 1}, {"from": "Szeth", "to": "Ton", "value": 6, "width": 1}, {"from": "Szeth", "to": "Amark", "value": 12, "width": 1}, {"from": "Szeth", "to": "Roshar", "value": 10, "width": 1}, {"from": "Szeth", "to": "Jasnah", "value": 4, "width": 1}, {"from": "Szeth", "to": "Taravangian", "value": 137, "width": 1}, {"from": "Jasnah", "to": "Elhokar", "value": 43, "width": 1}, {"from": "Jasnah", "to": "Shallan", "value": 1483, "width": 1}, {"from": "Jasnah", "to": "Yalb", "value": 4, "width": 1}, {"from": "Jasnah", "to": "Roshar", "value": 11, "width": 1}, {"from": "Jasnah", "to": "Taravangian", "value": 68, "width": 1}, {"from": "Jasnah", "to": "Thaylen", "value": 4, "width": 1}, {"from": "Jasnah", "to": "Ten", "value": 2, "width": 1}, {"from": "Jasnah", "to": "Malise", "value": 3, "width": 1}, {"from": "Jasnah", "to": "Kabsal", "value": 261, "width": 1}, {"from": "Jasnah", "to": "Herdazian", "value": 11, "width": 1}, {"from": "Jasnah", "to": "Natanatan", "value": 16, "width": 1}, {"from": "Jasnah", "to": "Balat", "value": 15, "width": 1}, {"from": "Jasnah", "to": "Adolin", "value": 29, "width": 1}, {"from": "Jasnah", "to": "Gavilar", "value": 35, "width": 1}, {"from": "Jasnah", "to": "Renarin", "value": 12, "width": 1}, {"from": "Jasnah", "to": "Brightlord", "value": 5, "width": 1}, {"from": "Jasnah", "to": "Danlan", "value": 60, "width": 1}, {"from": "Jasnah", "to": "Unclaimed", "value": 12, "width": 1}, {"from": "Jasnah", "to": "Navani", "value": 26, "width": 1}, {"from": "Jasnah", "to": "Wikim", "value": 2, "width": 1}, {"from": "Jasnah", "to": "Varas", "value": 7, "width": 1}, {"from": "Jasnah", "to": "Klade", "value": 3, "width": 1}, {"from": "Jasnah", "to": "Matain", "value": 4, "width": 1}, {"from": "Jasnah", "to": "Tozbek", "value": 12, "width": 1}, {"from": "Jasnah", "to": "Kaladin", "value": 2, "width": 1}, {"from": "Elhokar", "to": "Taravangian", "value": 5, "width": 1}, {"from": "Elhokar", "to": "Adolin", "value": 230, "width": 1}, {"from": "Elhokar", "to": "Navani", "value": 60, "width": 1}, {"from": "Elhokar", "to": "Renarin", "value": 20, "width": 1}, {"from": "Elhokar", "to": "Gavilar", "value": 25, "width": 1}, {"from": "Elhokar", "to": "Kaladin", "value": 7, "width": 1}, {"from": "Elhokar", "to": "Brightlord", "value": 8, "width": 1}, {"from": "Elhokar", "to": "Danlan", "value": 5, "width": 1}, {"from": "Elhokar", "to": "Ialai", "value": 5, "width": 1}, {"from": "Elhokar", "to": "Hatham", "value": 4, "width": 1}, {"from": "Elhokar", "to": "Unclaimed", "value": 3, "width": 1}, {"from": "Ten", "to": "Cenn", "value": 5, "width": 1}, {"from": "Ten", "to": "Kaladin", "value": 33, "width": 1}, {"from": "Ten", "to": "Yalb", "value": 12, "width": 1}, {"from": "Ten", "to": "Shallan", "value": 4, "width": 1}, {"from": "Ten", "to": "Bashin", "value": 1, "width": 1}, {"from": "Ten", "to": "Adolin", "value": 2, "width": 1}, {"from": "Truthless", "to": "Vstim", "value": 6, "width": 1}, {"from": "Gavilar", "to": "Adolin", "value": 39, "width": 1}, {"from": "Gavilar", "to": "Brightlord", "value": 5, "width": 1}, {"from": "Gavilar", "to": "Navani", "value": 38, "width": 1}, {"from": "Gavilar", "to": "Litima", "value": 5, "width": 1}, {"from": "Cenn", "to": "Dallet", "value": 133, "width": 1}, {"from": "Cenn", "to": "Kaladin", "value": 392, "width": 1}, {"from": "Cenn", "to": "Brightlord", "value": 10, "width": 1}, {"from": "Cenn", "to": "Kusiri", "value": 6, "width": 1}, {"from": "Cenn", "to": "Tien", "value": 6, "width": 1}, {"from": "Cenn", "to": "Galan", "value": 6, "width": 1}, {"from": "Cenn", "to": "Dunny", "value": 4, "width": 1}, {"from": "Dallet", "to": "Kaladin", "value": 223, "width": 1}, {"from": "Dallet", "to": "Kusiri", "value": 5, "width": 1}, {"from": "Dallet", "to": "Hallaw", "value": 5, "width": 1}, {"from": "Dallet", "to": "Tien", "value": 18, "width": 1}, {"from": "Dallet", "to": "Tvlakv", "value": 5, "width": 1}, {"from": "Dallet", "to": "Tukks", "value": 6, "width": 1}, {"from": "Kaladin", "to": "Unclaimed", "value": 6, "width": 1}, {"from": "Kaladin", "to": "Tvlakv", "value": 263, "width": 1}, {"from": "Kaladin", "to": "Tien", "value": 428, "width": 1}, {"from": "Kaladin", "to": "Thaylen", "value": 14, "width": 1}, {"from": "Kaladin", "to": "Roshar", "value": 22, "width": 1}, {"from": "Kaladin", "to": "Lirin", "value": 296, "width": 1}, {"from": "Kaladin", "to": "Teft", "value": 473, "width": 1}, {"from": "Kaladin", "to": "Moash", "value": 192, "width": 1}, {"from": "Kaladin", "to": "Dunny", "value": 307, "width": 1}, {"from": "Kaladin", "to": "Sigzil", "value": 300, "width": 1}, {"from": "Kaladin", "to": "Horneater", "value": 227, "width": 1}, {"from": "Kaladin", "to": "Rock", "value": 201, "width": 1}, {"from": "Kaladin", "to": "Khav", "value": 4, "width": 1}, {"from": "Kaladin", "to": "Laral", "value": 23, "width": 1}, {"from": "Kaladin", "to": "Jost", "value": 10, "width": 1}, {"from": "Kaladin", "to": "Dabbid", "value": 135, "width": 1}, {"from": "Kaladin", "to": "Harl", "value": 9, "width": 1}, {"from": "Kaladin", "to": "Hav", "value": 16, "width": 1}, {"from": "Kaladin", "to": "Lamaril", "value": 135, "width": 1}, {"from": "Kaladin", "to": "Natam", "value": 42, "width": 1}, {"from": "Kaladin", "to": "Unkalaki", "value": 4, "width": 1}, {"from": "Kaladin", "to": "Tukks", "value": 20, "width": 1}, {"from": "Kaladin", "to": "Herdazian", "value": 81, "width": 1}, {"from": "Kaladin", "to": "Lopen", "value": 558, "width": 1}, {"from": "Kaladin", "to": "Wistiow", "value": 3, "width": 1}, {"from": "Kaladin", "to": "Rillir", "value": 72, "width": 1}, {"from": "Kaladin", "to": "Hesina", "value": 48, "width": 1}, {"from": "Kaladin", "to": "Hashal", "value": 87, "width": 1}, {"from": "Kaladin", "to": "Ral", "value": 16, "width": 1}, {"from": "Kaladin", "to": "Naget", "value": 6, "width": 1}, {"from": "Kaladin", "to": "Natir", "value": 3, "width": 1}, {"from": "Kaladin", "to": "Brightlord", "value": 19, "width": 1}, {"from": "Kaladin", "to": "Taleb", "value": 5, "width": 1}, {"from": "Kaladin", "to": "Shallan", "value": 1, "width": 1}, {"from": "Kaladin", "to": "Adolin", "value": 79, "width": 1}, {"from": "Kaladin", "to": "Hallaw", "value": 8, "width": 1}, {"from": "Kaladin", "to": "Galan", "value": 4, "width": 1}, {"from": "Kaladin", "to": "Ven", "value": 19, "width": 1}, {"from": "Kaladin", "to": "Alabet", "value": 20, "width": 1}, {"from": "Kaladin", "to": "Kabsal", "value": 1, "width": 1}, {"from": "Kaladin", "to": "Baxil", "value": 4, "width": 1}, {"from": "Kaladin", "to": "Amark", "value": 4, "width": 1}, {"from": "Kaladin", "to": "Avarak", "value": 10, "width": 1}, {"from": "Kaladin", "to": "Tarah", "value": 5, "width": 1}, {"from": "Kaladin", "to": "Sheler", "value": 14, "width": 1}, {"from": "Kaladin", "to": "Nacomb", "value": 10, "width": 1}, {"from": "Brightlord", "to": "Adolin", "value": 53, "width": 1}, {"from": "Brightlord", "to": "Renarin", "value": 10, "width": 1}, {"from": "Brightlord", "to": "Bashin", "value": 6, "width": 1}, {"from": "Brightlord", "to": "Teshav", "value": 41, "width": 1}, {"from": "Brightlord", "to": "Torol", "value": 6, "width": 1}, {"from": "Brightlord", "to": "Lirin", "value": 24, "width": 1}, {"from": "Brightlord", "to": "Wistiow", "value": 3, "width": 1}, {"from": "Brightlord", "to": "Teleb", "value": 30, "width": 1}, {"from": "Brightlord", "to": "Havarah", "value": 6, "width": 1}, {"from": "Brightlord", "to": "Ilamar", "value": 5, "width": 1}, {"from": "Brightlord", "to": "Niter", "value": 4, "width": 1}, {"from": "Brightlord", "to": "Navani", "value": 2, "width": 1}, {"from": "Brightlord", "to": "Litima", "value": 2, "width": 1}, {"from": "Brightlord", "to": "Danlan", "value": 6, "width": 1}, {"from": "Brightlord", "to": "Lamaril", "value": 14, "width": 1}, {"from": "Brightlord", "to": "Hatham", "value": 6, "width": 1}, {"from": "Brightlord", "to": "Fin", "value": 3, "width": 1}, {"from": "Unclaimed", "to": "Tvlakv", "value": 4, "width": 1}, {"from": "Unclaimed", "to": "Shallan", "value": 6, "width": 1}, {"from": "Unclaimed", "to": "Natanatan", "value": 6, "width": 1}, {"from": "Tvlakv", "to": "Laral", "value": 8, "width": 1}, {"from": "Tvlakv", "to": "Tien", "value": 2, "width": 1}, {"from": "Tien", "to": "Tukks", "value": 10, "width": 1}, {"from": "Tien", "to": "Lirin", "value": 65, "width": 1}, {"from": "Tien", "to": "Laral", "value": 33, "width": 1}, {"from": "Tien", "to": "Naget", "value": 3, "width": 1}, {"from": "Tien", "to": "Jost", "value": 9, "width": 1}, {"from": "Tien", "to": "Ral", "value": 26, "width": 1}, {"from": "Tien", "to": "Hesina", "value": 41, "width": 1}, {"from": "Tien", "to": "Tarah", "value": 1, "width": 1}, {"from": "Tien", "to": "Sheler", "value": 2, "width": 1}, {"from": "Thaylen", "to": "Shallan", "value": 10, "width": 1}, {"from": "Thaylen", "to": "Ashlv", "value": 1, "width": 1}, {"from": "Thaylen", "to": "Yalb", "value": 10, "width": 1}, {"from": "Thaylen", "to": "Artmyrn", "value": 4, "width": 1}, {"from": "Thaylen", "to": "Rysn", "value": 5, "width": 1}, {"from": "Thaylen", "to": "Vstim", "value": 15, "width": 1}, {"from": "Thaylen", "to": "Kabsal", "value": 7, "width": 1}, {"from": "Shallan", "to": "Tozbek", "value": 23, "width": 1}, {"from": "Shallan", "to": "Ashlv", "value": 2, "width": 1}, {"from": "Shallan", "to": "Yalb", "value": 74, "width": 1}, {"from": "Shallan", "to": "Roshar", "value": 47, "width": 1}, {"from": "Shallan", "to": "Eylita", "value": 23, "width": 1}, {"from": "Shallan", "to": "Balat", "value": 21, "width": 1}, {"from": "Shallan", "to": "Luesh", "value": 17, "width": 1}, {"from": "Shallan", "to": "Taravangian", "value": 17, "width": 1}, {"from": "Shallan", "to": "Kabsal", "value": 149, "width": 1}, {"from": "Shallan", "to": "Sur", "value": 5, "width": 1}, {"from": "Shallan", "to": "Navani", "value": 9, "width": 1}, {"from": "Shallan", "to": "Natanatan", "value": 5, "width": 1}, {"from": "Tozbek", "to": "Yalb", "value": 1, "width": 1}, {"from": "Yalb", "to": "Artmyrn", "value": 15, "width": 1}, {"from": "Yalb", "to": "Barmest", "value": 4, "width": 1}, {"from": "Roshar", "to": "Balat", "value": 5, "width": 1}, {"from": "Roshar", "to": "Adolin", "value": 17, "width": 1}, {"from": "Roshar", "to": "Sigzil", "value": 5, "width": 1}, {"from": "Roshar", "to": "Unkalaki", "value": 6, "width": 1}, {"from": "Roshar", "to": "Horneater", "value": 4, "width": 1}, {"from": "Roshar", "to": "Renarin", "value": 1, "width": 1}, {"from": "Roshar", "to": "Navani", "value": 10, "width": 1}, {"from": "Roshar", "to": "Teft", "value": 2, "width": 1}, {"from": "Roshar", "to": "Vstim", "value": 1, "width": 1}, {"from": "Roshar", "to": "Rysn", "value": 2, "width": 1}, {"from": "Roshar", "to": "Axies", "value": 5, "width": 1}, {"from": "Roshar", "to": "Natanatan", "value": 3, "width": 1}, {"from": "Roshar", "to": "Taravangian", "value": 4, "width": 1}, {"from": "Taravangian", "to": "Kabsal", "value": 1, "width": 1}, {"from": "Laral", "to": "Ral", "value": 4, "width": 1}, {"from": "Laral", "to": "Jost", "value": 20, "width": 1}, {"from": "Laral", "to": "Lirin", "value": 15, "width": 1}, {"from": "Laral", "to": "Rillir", "value": 27, "width": 1}, {"from": "Kabsal", "to": "Luesh", "value": 1, "width": 1}, {"from": "Herdazian", "to": "Havarah", "value": 5, "width": 1}, {"from": "Herdazian", "to": "Ashelem", "value": 5, "width": 1}, {"from": "Herdazian", "to": "Navani", "value": 4, "width": 1}, {"from": "Herdazian", "to": "Lopen", "value": 33, "width": 1}, {"from": "Artmyrn", "to": "Barmest", "value": 3, "width": 1}, {"from": "Lirin", "to": "Hesina", "value": 44, "width": 1}, {"from": "Lirin", "to": "Wistiow", "value": 17, "width": 1}, {"from": "Lirin", "to": "Terith", "value": 3, "width": 1}, {"from": "Lirin", "to": "Lamaril", "value": 1, "width": 1}, {"from": "Lirin", "to": "Ral", "value": 5, "width": 1}, {"from": "Lirin", "to": "Rillir", "value": 46, "width": 1}, {"from": "Lirin", "to": "Habrin", "value": 1, "width": 1}, {"from": "Lirin", "to": "Loats", "value": 4, "width": 1}, {"from": "Hesina", "to": "Rillir", "value": 2, "width": 1}, {"from": "Wistiow", "to": "Rock", "value": 3, "width": 1}, {"from": "Wistiow", "to": "Natir", "value": 2, "width": 1}, {"from": "Wistiow", "to": "Rillir", "value": 8, "width": 1}, {"from": "Teft", "to": "Dunny", "value": 28, "width": 1}, {"from": "Teft", "to": "Rock", "value": 19, "width": 1}, {"from": "Teft", "to": "Horneater", "value": 19, "width": 1}, {"from": "Teft", "to": "Sigzil", "value": 16, "width": 1}, {"from": "Teft", "to": "Moash", "value": 6, "width": 1}, {"from": "Teft", "to": "Lopen", "value": 35, "width": 1}, {"from": "Teft", "to": "Navani", "value": 5, "width": 1}, {"from": "Ishikk", "to": "Thaspic", "value": 4, "width": 1}, {"from": "Ishikk", "to": "Maib", "value": 10, "width": 1}, {"from": "Eylita", "to": "Wikim", "value": 5, "width": 1}, {"from": "Balat", "to": "Luesh", "value": 6, "width": 1}, {"from": "Ton", "to": "Amark", "value": 5, "width": 1}, {"from": "Amark", "to": "Dunny", "value": 6, "width": 1}, {"from": "Adolin", "to": "Renarin", "value": 338, "width": 1}, {"from": "Adolin", "to": "Vartian", "value": 15, "width": 1}, {"from": "Adolin", "to": "Navani", "value": 209, "width": 1}, {"from": "Adolin", "to": "Bashin", "value": 8, "width": 1}, {"from": "Adolin", "to": "Roion", "value": 7, "width": 1}, {"from": "Adolin", "to": "Avaran", "value": 4, "width": 1}, {"from": "Adolin", "to": "Falksi", "value": 11, "width": 1}, {"from": "Adolin", "to": "Kadash", "value": 47, "width": 1}, {"from": "Adolin", "to": "Litima", "value": 4, "width": 1}, {"from": "Adolin", "to": "Teleb", "value": 25, "width": 1}, {"from": "Adolin", "to": "Ilamar", "value": 7, "width": 1}, {"from": "Adolin", "to": "Danlan", "value": 91, "width": 1}, {"from": "Adolin", "to": "Havrom", "value": 27, "width": 1}, {"from": "Adolin", "to": "Horneater", "value": 2, "width": 1}, {"from": "Adolin", "to": "Niter", "value": 15, "width": 1}, {"from": "Adolin", "to": "Rysn", "value": 3, "width": 1}, {"from": "Adolin", "to": "Jakamav", "value": 28, "width": 1}, {"from": "Adolin", "to": "Eshava", "value": 24, "width": 1}, {"from": "Adolin", "to": "Inkima", "value": 12, "width": 1}, {"from": "Adolin", "to": "Resi", "value": 54, "width": 1}, {"from": "Renarin", "to": "Kadash", "value": 5, "width": 1}, {"from": "Renarin", "to": "Ruthar", "value": 3, "width": 1}, {"from": "Renarin", "to": "Elthebar", "value": 6, "width": 1}, {"from": "Renarin", "to": "Aladar", "value": 15, "width": 1}, {"from": "Renarin", "to": "Navani", "value": 69, "width": 1}, {"from": "Renarin", "to": "Danlan", "value": 15, "width": 1}, {"from": "Navani", "to": "Torol", "value": 3, "width": 1}, {"from": "Navani", "to": "Danlan", "value": 19, "width": 1}, {"from": "Moash", "to": "Dunny", "value": 5, "width": 1}, {"from": "Moash", "to": "Sigzil", "value": 3, "width": 1}, {"from": "Moash", "to": "Lopen", "value": 5, "width": 1}, {"from": "Dunny", "to": "Horneater", "value": 10, "width": 1}, {"from": "Dunny", "to": "Rock", "value": 6, "width": 1}, {"from": "Dunny", "to": "Sigzil", "value": 12, "width": 1}, {"from": "Sigzil", "to": "Horneater", "value": 27, "width": 1}, {"from": "Sigzil", "to": "Rock", "value": 7, "width": 1}, {"from": "Sigzil", "to": "Lopen", "value": 4, "width": 1}, {"from": "Horneater", "to": "Rock", "value": 26, "width": 1}, {"from": "Horneater", "to": "Havrom", "value": 6, "width": 1}, {"from": "Horneater", "to": "Lopen", "value": 5, "width": 1}, {"from": "Rock", "to": "Lopen", "value": 3, "width": 1}, {"from": "Jest", "to": "Jost", "value": 12, "width": 1}, {"from": "Jest", "to": "Naget", "value": 5, "width": 1}, {"from": "Jest", "to": "Khav", "value": 3, "width": 1}, {"from": "Jost", "to": "Naget", "value": 6, "width": 1}, {"from": "Jost", "to": "Abry", "value": 10, "width": 1}, {"from": "Jost", "to": "Harl", "value": 1, "width": 1}, {"from": "Naget", "to": "Khav", "value": 6, "width": 1}, {"from": "Dabbid", "to": "Lopen", "value": 87, "width": 1}, {"from": "Marks", "to": "Tibon", "value": 6, "width": 1}, {"from": "Marks", "to": "Falksi", "value": 6, "width": 1}, {"from": "Teshav", "to": "Hatham", "value": 4, "width": 1}, {"from": "Hatham", "to": "Bethab", "value": 6, "width": 1}, {"from": "Harl", "to": "Miasal", "value": 4, "width": 1}, {"from": "Lamaril", "to": "Hashal", "value": 3, "width": 1}, {"from": "Litima", "to": "Danlan", "value": 6, "width": 1}, {"from": "Teleb", "to": "Ilamar", "value": 6, "width": 1}, {"from": "Danlan", "to": "Jakamav", "value": 7, "width": 1}, {"from": "Rysn", "to": "Vstim", "value": 30, "width": 1}, {"from": "Lopen", "to": "Hashal", "value": 9, "width": 1}, {"from": "Agil", "to": "Marf", "value": 6, "width": 1}, {"from": "Marf", "to": "Taleb", "value": 5, "width": 1}, {"from": "Habrin", "to": "Arafik", "value": 6, "width": 1}, {"from": "Arafik", "to": "Jorna", "value": 5, "width": 1}, {"from": "Jorna", "to": "Loats", "value": 6, "width": 1}, {"from": "Jakamav", "to": "Inkima", "value": 17, "width": 1}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+                      network.on("stabilizationProgress", function(params) {
+                          document.getElementById('loadingBar').removeAttribute("style");
+                          var maxWidth = 496;
+                          var minWidth = 20;
+                          var widthFactor = params.iterations/params.total;
+                          var width = Math.max(minWidth,maxWidth * widthFactor);
+                          document.getElementById('bar').style.width = width + 'px';
+                          document.getElementById('text').innerHTML = Math.round(widthFactor*100) + '%';
+                      });
+                      network.once("stabilizationIterationsDone", function() {
+                          document.getElementById('text').innerHTML = '100%';
+                          document.getElementById('bar').style.width = '496px';
+                          document.getElementById('loadingBar').style.opacity = 0;
+                          // really clean the dom element
+                          setTimeout(function () {document.getElementById('loadingBar').style.display = 'none';}, 500);
+                      });
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>

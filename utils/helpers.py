@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 
 
 def load_characters():
-    character_df = pd.read_csv('./characters/characters.csv')
+    character_df = pd.read_csv('./data/characters/characters.csv')
     character_df['character'] = character_df['character'].apply(lambda x: re.sub("[\(].*?[\)]", "", x))
     character_df['character_firstname'] = character_df['character'].apply(lambda x: x.split(' ', 1)[0])
     return character_df
